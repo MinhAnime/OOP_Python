@@ -7,6 +7,7 @@ class ManageCustomer:
 
     def add_customer(self, customer):
         self.customers.append(customer)
+        print(f"Thêm khách hàng {customer.name} (ID {customer.id}) thành công")
 
     def edit_customer(self, id, name=None, phone=None, email=None, diemtichluy=None, solanmuahang=None, tonggiatrimuahang=None):
         for i, customer in enumerate(self.customers):
@@ -19,19 +20,20 @@ class ManageCustomer:
                 if isinstance(customer, LoyalCustomer):
                     customer.diemtichluy = diemtichluy if diemtichluy is not None else customer.diemtichluy
                     customer.tonggiatrimuahang = tonggiatrimuahang if tonggiatrimuahang is not None else customer.tonggiatrimuahang
+                    print(f"Thông tin khách hàng đã được cập nhật: {customer}")
                 elif isinstance(customer, CasualCustomer):
                     customer.solanmuahang = solanmuahang if solanmuahang is not None else customer.solanmuahang
                     customer.tonggiatrimuahang = tonggiatrimuahang if tonggiatrimuahang is not None else customer.tonggiatrimuahang
-                    if customer.tonggiatrimuahang > 2_000_000:
-                        self.customers[i] = LoyalCustomer(
-                            customer.id,
-                            customer.name,
-                            customer.phone,
-                            customer.email,
-                            diemtichluy=0,
-                            tonggiatrimuahang=customer.tonggiatrimuahang
-                        )
-                break
+                    print(f"Thông tin khách hàng đã được cập nhật: {customer}")
+    def upgrade_customer(self, id):
+        for customer in self.customers:
+            if customer.id == id and isinstance(customer, CasualCustomer):
+                if customer.tonggiatrimuahang > 2000000:
+                    self.customers.remove(customer)
+                    self.customers.append(LoyalCustomer(customer.id, customer.name, customer.phone, customer.email, diemtichluy=0, tonggiatrimuahang=customer.tonggiatrimuahang))
+                    print(f"Khách hàng {customer.name} (ID {customer.id}) đã nâng cấp thành công")
+                    return
+        print(f"Không tìm thấy khách hàng vãng lai có ID {id} hoặc khách hàng này không đủ điều kiện nâng cấp.")
 
     def delete_customer(self, id):
         for customer in self.customers:
@@ -67,5 +69,5 @@ class ManageCustomer:
         return sorted(self.customers, key=lambda i: i.tonggiatrimuahang, reverse=True)[:3]
 
     def top_10(self):
-        khach_hang_than_thiet = [i for i in self.customers if isinstance(i, LoyalCustomer)]
+        khach_hang_than_thiet = [i for i in self.customers if isinstance(i, LoyalCustomer) and i.diemtichluy > 500]
         return sorted(khach_hang_than_thiet, key=lambda i: i.diemtichluy, reverse=True)[:10]
