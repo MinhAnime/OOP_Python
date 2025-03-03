@@ -22,9 +22,6 @@ def main():
 
         if choice == "1":
             id = input("Nhập mã khách hàng: ").strip()
-            if next((c for c in manager.customers if c.id == id), None):
-                print("Mã khách hàng đã tồn tại, vui lòng nhập mã khác.")
-                continue
             name = input("Nhập tên: ").strip()
             phone = input("Nhập số điện thoại: ").strip()
             email = input("Nhập Email: ").strip()

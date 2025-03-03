@@ -6,6 +6,8 @@ class ManageCustomer:
         self.customers = []
 
     def add_customer(self, customer):
+        if any(c.id == customer.id for c in self.customers):
+            raise ValueError(f"Mã khách hàng {customer.id} đã tồn tại")
         self.customers.append(customer)
         print(f"Thêm khách hàng {customer.name} (ID {customer.id}) thành công")
 
@@ -25,15 +27,22 @@ class ManageCustomer:
                     customer.solanmuahang = solanmuahang if solanmuahang is not None else customer.solanmuahang
                     customer.tonggiatrimuahang = tonggiatrimuahang if tonggiatrimuahang is not None else customer.tonggiatrimuahang
                     print(f"Thông tin khách hàng đã được cập nhật: {customer}")
+                    break
+        else:
+            raise ValueError(f"Không tìm thấy khách hàng có ID {id}")
+
     def upgrade_customer(self, id):
         for customer in self.customers:
             if customer.id == id and isinstance(customer, CasualCustomer):
                 if customer.tonggiatrimuahang > 2000000:
                     self.customers.remove(customer)
-                    self.customers.append(LoyalCustomer(customer.id, customer.name, customer.phone, customer.email, diemtichluy=0, tonggiatrimuahang=customer.tonggiatrimuahang))
+                    self.customers.append(
+                        LoyalCustomer(customer.id, customer.name, customer.phone, customer.email, diemtichluy=0,
+                                      tonggiatrimuahang=customer.tonggiatrimuahang))
                     print(f"Khách hàng {customer.name} (ID {customer.id}) đã nâng cấp thành công")
                     return
-        print(f"Không tìm thấy khách hàng vãng lai có ID {id} hoặc khách hàng này không đủ điều kiện nâng cấp.")
+        else:
+            raise ValueError(f"Không tìm thấy khách hàng có ID {id} hoặc khách hàng đã là khách hàng thân thiết")
 
     def delete_customer(self, id):
         for customer in self.customers:
@@ -41,7 +50,8 @@ class ManageCustomer:
                 self.customers.remove(customer)
                 print(f"Khách hàng {customer.name} (ID {customer.id}) đã xóa thành công")
                 return
-        print(f"Không tìm thấy khách hàng có ID {id}.")
+        else:
+            raise ValueError(f"Không tìm thấy khách hàng có ID {id}")
 
     def search_customer(self, keyword):
         ket_qua = [
